@@ -101,7 +101,7 @@ class ForegroundNotificationView: UIView, UITextViewDelegate {
             
             height += 45
             
-            if !textView.text.characters.isEmpty {
+            if !textView.text.isEmpty {
                 height += currentHeightForTextView - 45
             }
         }
@@ -190,9 +190,9 @@ class ForegroundNotificationView: UIView, UITextViewDelegate {
         
         appIconImageView.image = UIImage(named: "AppIcon40x40")
         
-        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange), name: .UIDeviceOrientationDidChange, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: .UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: .UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     //MARK: - Deinitialization
@@ -351,7 +351,7 @@ class ForegroundNotificationView: UIView, UITextViewDelegate {
     
     @IBAction func sendButtonTapped(_ sender: UIButton) {
         
-        if !textView.text.characters.isEmpty {
+        if !textView.text.isEmpty {
             
             dismissNotification {
                 
@@ -389,19 +389,19 @@ class ForegroundNotificationView: UIView, UITextViewDelegate {
     
     //MARK: - Internal
     
-    func keyboardWillShow(notification: NSNotification) {
-        currentHeightForKeyboard = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height ?? 0
+    @objc func keyboardWillShow(notification: NSNotification) {
+        currentHeightForKeyboard = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.size.height ?? 0
     }
     
-    func keyboardWillHide() {
+    @objc func keyboardWillHide() {
         currentHeightForKeyboard = 0
     }
     
-    func dimmingViewTapped(tapRecognizer: UITapGestureRecognizer) {
+    @objc func dimmingViewTapped(tapRecognizer: UITapGestureRecognizer) {
         dismissNotification()
     }
     
-    func orientationDidChange() {
+    @objc func orientationDidChange() {
         
         if extendingIsFinished {
             
@@ -422,7 +422,7 @@ class ForegroundNotificationView: UIView, UITextViewDelegate {
             
             setupActions()
             
-            window.windowLevel = UIWindowLevelStatusBar
+            window.windowLevel = UIWindow.Level.statusBar
             
             frame = CGRect(x: 0, y: -initialHeightForNotification, width: UIApplication.shared.windows.first!.bounds.size.width, height: initialHeightForNotification)
             layoutIfNeeded()
@@ -431,7 +431,7 @@ class ForegroundNotificationView: UIView, UITextViewDelegate {
             translatesAutoresizingMaskIntoConstraints = false
             
             window.addSubview(self)
-            window.bringSubview(toFront: self)
+            window.bringSubviewToFront(self)
             
             topConstraintNotification = NSLayoutConstraint(item: self, attribute: .top, relatedBy: .equal, toItem: window, attribute: .top, multiplier: 1, constant: -initialHeightForNotification)
             heightConstraintNotification = NSLayoutConstraint(item: self, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: initialHeightForNotification)
@@ -476,7 +476,7 @@ class ForegroundNotificationView: UIView, UITextViewDelegate {
         }
     }
     
-    func dismissAfterTimer() {
+    @objc func dismissAfterTimer() {
         dismissNotification()
     }
     
@@ -503,7 +503,7 @@ class ForegroundNotificationView: UIView, UITextViewDelegate {
                 ForegroundNotification.pendingForegroundNotifications.first?.fire()
                 
                 if ForegroundNotification.pendingForegroundNotifications.isEmpty {
-                    UIApplication.shared.delegate?.window??.windowLevel = UIWindowLevelNormal
+                    UIApplication.shared.delegate?.window??.windowLevel = UIWindow.Level.normal
                 }
                 
                 completion?()

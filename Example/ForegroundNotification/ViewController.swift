@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import ForegroundNotification
+import BSForegroundNotification
 
 class ViewController: UIViewController, ForegroundNotificationDelegate {
     

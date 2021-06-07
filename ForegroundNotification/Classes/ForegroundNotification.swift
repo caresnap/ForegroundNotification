@@ -21,8 +21,8 @@ open class ForegroundNotification {
         return UINib(nibName: "ForegroundNotificationView", bundle: Bundle(for: ForegroundNotificationView.classForCoder())).instantiate(withOwner: nil, options: nil).first as! ForegroundNotificationView
     }()
     
-    open static var systemSoundID: SystemSoundID = 1001
-    open static var timeToDismissNotification = 4
+    public static var systemSoundID: SystemSoundID = 1001
+    public static var timeToDismissNotification = 4
     
     open weak var delegate: ForegroundNotificationDelegate? {
         

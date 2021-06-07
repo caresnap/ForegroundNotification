@@ -1,6 +1,6 @@
 import UIKit
 import XCTest
-import ForegroundNotification
+
 
 class Tests: XCTestCase {
     
